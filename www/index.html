@@ -13,6 +13,7 @@
 :root[data-theme="dark"]{--bg:#0f1a14;--card:#17261d;--tx:#e8f2eb;--mut:#9bb0a2;--pri:#3ecb7a;--pri2:#1e3a2a;--bad:#ff7b6b;--gold:#f3c969;--bd:#2c4235}
 *{box-sizing:border-box}html,body{margin:0}
 body{background:var(--bg);color:var(--tx);font-family:system-ui,"Segoe UI",Tahoma,Arial,sans-serif;min-height:100vh}
+.brand{display:flex;flex-direction:column;align-items:center;gap:8px;margin:10px 0 22px}.brand img{width:min(62vw,230px);height:auto;aspect-ratio:1;object-fit:contain;border-radius:28px;filter:drop-shadow(0 8px 18px #0005)}.brand h1{margin:0;text-align:center}
 main{max-width:520px;margin:0 auto;padding:16px}
 h1{font-size:26px;margin:8px 0}h2{font-size:19px;margin:0 0 10px}
 .card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:16px;margin:12px 0}
@@ -90,13 +91,19 @@ const $=document.getElementById("app");
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
 const sh=a=>a.map(x=>[Math.random(),x]).sort((x,y)=>x[0]-y[0]).map(x=>x[1]);
 const LBL={p:"من هو اللاعب؟",tp:"لاعب من انتقالاته",g:"سؤال عام",t:"سؤال انتقالات"};
-let G=null,GV=null,NET=null,tab="g",BZ="",SRV="",MYN="";
-try{SRV=localStorage.getItem("fbsrv")||"";MYN=localStorage.getItem("fbme")||""}catch(e){}
+let G=null,GV=null,NET=null,tab="g",BZ="",MYN="";
+// Use the same Render host automatically in the browser; use the deployed
+// Render URL when running inside the Android Capacitor app.
+const DEFAULT_SERVER = (location.hostname && location.hostname !== "localhost" && location.hostname !== "127.0.0.1" && !location.hostname.endsWith(".local"))
+  ? ((location.protocol === "https:" ? "wss://" : "ws://") + location.host)
+  : "wss://football-0kb6.onrender.com";
+let SRV=DEFAULT_SERVER;
+try{MYN=localStorage.getItem("fbme")||""}catch(e){}
 const send=o=>{if(NET&&NET.ws.readyState===1)NET.ws.send(JSON.stringify(o))};
 const cur=()=>G.rounds[G.r][G.i];
 function leave(){if(NET){NET.closed=true;try{NET.ws.close()}catch(e){}}NET=null;G=null;GV=null}
 function home(){leave();
- $.innerHTML=`<h1>⚽ تحدي كرة القدم</h1>
+ $.innerHTML=`<div class="brand"><img src="logo.png" alt="Football Challenge"><h1>تحدي كرة القدم</h1></div>
  <button class="pri big" onclick="setup()">🎮 أوفلاين (على نفس الجهاز)</button>
  <button class="big" onclick="onl()">🌐 أونلاين</button>
  <button class="w" onclick="editor()">إضافة أسئلة ولاعبين</button>
@@ -106,7 +113,7 @@ function home(){leave();
 function st(t){const e=document.getElementById("st");if(e)e.textContent=t}
 function onl(){leave();
  $.innerHTML=`<h1>🌐 أونلاين</h1><div class="card"><h2>الاتصال</h2>
- <input class="in" id="sv" placeholder="رابط السيرفر wss://..." value="${esc(SRV)}">
+ <small>السيرفر متصل تلقائياً — لا تحتاج لإدخال رابطه.</small>
  <input class="in" id="on" placeholder="اسمك (للانضمام)" value="${esc(MYN)}">
  <button class="pri" style="margin-top:8px" onclick="conn(()=>send({t:'create'}),true)">إنشاء غرفة (أنا المضيف)</button>
  <div class="row"><input id="cd" placeholder="رمز الغرفة" maxlength="5" style="text-transform:uppercase"><button onclick="joinRoom()">انضمام</button></div>
@@ -118,9 +125,9 @@ function joinRoom(){
  conn(()=>send({t:"join",code:c,name:n}),false);
 }
 function conn(cb,h){
- SRV=document.getElementById("sv").value.trim();MYN=document.getElementById("on").value.trim();
- try{localStorage.setItem("fbsrv",SRV);localStorage.setItem("fbme",MYN)}catch(e){}
- if(!/^wss?:\/\/.+/.test(SRV))return st("أدخل رابط السيرفر (يبدأ بـ wss://)");
+ SRV=DEFAULT_SERVER;MYN=document.getElementById("on").value.trim();
+ try{localStorage.setItem("fbme",MYN)}catch(e){}
+ if(!/^wss?:\/\/.+/.test(SRV))return st("تعذر تحديد عنوان السيرفر تلقائياً");
  let ws;try{ws=new WebSocket(SRV)}catch(e){return st("رابط غير صالح")}
  st("جارٍ الاتصال...");NET={ws,host:!!h,code:"",peers:[]};
  ws.onopen=cb;
