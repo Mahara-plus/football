@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>تحدي كرة القدم</title>
+<style>
+:root{--bg:#f4f7f2;--card:#fff;--tx:#14231a;--mut:#5d6e63;--pri:#1b8a4b;--pri2:#e8f5ee;--bad:#c0392b;--gold:#b7791f;--bd:#d5ddd7;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1a14;--card:#17261d;--tx:#e8f2eb;--mut:#9bb0a2;--pri:#3ecb7a;--pri2:#1e3a2a;--bad:#ff7b6b;--gold:#f3c969;--bd:#2c4235}}
+:root[data-theme="dark"]{--bg:#0f1a14;--card:#17261d;--tx:#e8f2eb;--mut:#9bb0a2;--pri:#3ecb7a;--pri2:#1e3a2a;--bad:#ff7b6b;--gold:#f3c969;--bd:#2c4235}
+*{box-sizing:border-box}html,body{margin:0}
+body{background:var(--bg);color:var(--tx);font-family:system-ui,"Segoe UI",Tahoma,Arial,sans-serif;min-height:100vh}
+main{max-width:520px;margin:0 auto;padding:16px}
+h1{font-size:26px;margin:8px 0}h2{font-size:19px;margin:0 0 10px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:16px;margin:12px 0}
+button{font:inherit;cursor:pointer;border-radius:12px;border:1px solid var(--bd);background:var(--card);color:var(--tx);padding:12px 14px}
+.pri{background:var(--pri);color:#fff;border:0;font-weight:700;width:100%;padding:14px}
+.w{width:100%;margin-top:8px}
+.row{display:flex;gap:10px;align-items:center;justify-content:space-between;margin:8px 0}
+input,select{font:inherit;background:var(--bg);color:var(--tx);border:1px solid var(--bd);border-radius:10px;padding:10px;width:100%}
+input[type=number]{width:80px;text-align:center}
+.bar{display:flex;justify-content:space-between;color:var(--mut);font-size:14px}
+.clue{background:var(--pri2);border-radius:10px;padding:10px;margin:6px 0}
+.ans{background:var(--pri);color:#fff;border-radius:12px;padding:14px;margin:12px 0;font-size:20px;font-weight:700;text-align:center}
+.tag{display:inline-block;background:var(--pri2);color:var(--pri);border-radius:20px;padding:2px 10px;font-size:13px;font-weight:700;margin-left:6px}
+.tag.h{color:var(--gold)}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}
+.chip{background:var(--pri2);border-radius:20px;padding:5px 12px;font-size:14px}
+.tabs{display:flex;gap:6px}.tabs button{flex:1;padding:8px;font-size:13px}.tabs .on{background:var(--pri);color:#fff}
+.big{padding:20px;font-size:18px;font-weight:700;width:100%;margin:8px 0}
+.lnk{background:none;border:0;color:var(--mut)}
+.in{margin:5px 0}small{color:var(--mut)}
+.rk{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--bd)}
+</style>
+</head>
+<body>
+<main id="app"></main>
+<script>
+const DEF={
+ cfg:{rounds:3,p:1,tp:1,g:1,t:1,diff:"x"},
+ names:[],
+ p:[
+  {d:"m",n:"ليونيل ميسي",c:["أرجنتيني، يلعب رقم 10","لعب لبرشلونة وباريس سان جيرمان","قاد بلاده للفوز بكأس العالم 2022"]},
+  {d:"m",n:"كريستيانو رونالدو",c:["برتغالي، مهاجم","لعب لمانشستر يونايتد وريال مدريد ويوفنتوس","الهداف التاريخي لدوري أبطال أوروبا"]},
+  {d:"m",n:"محمد صلاح",c:["مصري، جناح أيمن","لعب لروما وتشيلسي","نجم ليفربول"]},
+  {d:"m",n:"كيليان مبابي",c:["فرنسي، سريع جداً","بدأ مع موناكو","انضم إلى ريال مدريد عام 2024"]},
+  {d:"m",n:"إيرلينغ هالاند",c:["نرويجي، مهاجم ضخم","لعب لبروسيا دورتموند","هداف مانشستر سيتي"]},
+  {d:"h",n:"فيرجيل فان دايك",c:["هولندي، مدافع","لعب لسلتيك وساوثهامبتون","قائد ليفربول"]},
+  {d:"h",n:"كريم بنزيما",c:["فرنسي، مهاجم","قضى سنوات طويلة في ريال مدريد","فاز بالكرة الذهبية 2022"]},
+  {d:"h",n:"أندريس إنييستا",c:["إسباني، وسط","قضى معظم مسيرته في برشلونة","سجل هدف نهائي كأس العالم 2010"]}
+ ],
+ tp:[
+  {d:"m",n:"كريستيانو رونالدو",path:["سبورتينغ لشبونة","مانشستر يونايتد","ريال مدريد","يوفنتوس","مانشستر يونايتد","النصر"]},
+  {d:"m",n:"ليونيل ميسي",path:["برشلونة","باريس سان جيرمان","إنتر ميامي"]},
+  {d:"m",n:"نيمار",path:["سانتوس","برشلونة","باريس سان جيرمان","الهلال","سانتوس"]},
+  {d:"h",n:"زلاتان إبراهيموفيتش",path:["مالمو","أياكس","يوفنتوس","إنتر ميلان","برشلونة","ميلان","باريس سان جيرمان","مانشستر يونايتد","لوس أنجلوس غالاكسي","ميلان"]},
+  {d:"h",n:"ساديو ماني",path:["ميتز","ريد بول سالزبورغ","ساوثهامبتون","ليفربول","بايرن ميونخ","النصر"]},
+  {d:"h",n:"روبرت ليفاندوفسكي",path:["ليخ بوزنان","بروسيا دورتموند","بايرن ميونخ","برشلونة"]},
+  {d:"h",n:"محمد صلاح",path:["بازل","تشيلسي","فيورنتينا","روما","ليفربول"]}
+ ],
+ g:[
+  {d:"m",q:"من فاز بكأس العالم 2022؟",a:"الأرجنتين"},
+  {d:"m",q:"أي دولة استضافت كأس العالم 2018؟",a:"روسيا"},
+  {d:"m",q:"أكثر نادٍ فوزاً بدوري أبطال أوروبا؟",a:"ريال مدريد"},
+  {d:"m",q:"أكثر منتخب فوزاً بكأس العالم؟",a:"البرازيل (5 مرات)"},
+  {d:"h",q:"من هو الهداف التاريخي لكأس العالم؟",a:"ميروسلاف كلوزه (16 هدفاً)"},
+  {d:"h",q:"من فاز بكأس العالم 2010؟",a:"إسبانيا"},
+  {d:"h",q:"أي منتخب فاز ببطولة أمم أوروبا 2004؟",a:"اليونان"},
+  {d:"h",q:"في أي عام أقيمت أول بطولة كأس عالم، وأين؟",a:"1930 في الأوروغواي"}
+ ],
+ t:[
+  {d:"m",q:"إلى أي نادٍ انتقل رونالدو عام 2018 قادماً من ريال مدريد؟",a:"يوفنتوس"},
+  {d:"m",q:"من أي نادٍ انتقل ميسي إلى باريس سان جيرمان عام 2021؟",a:"برشلونة"},
+  {d:"m",q:"من أي نادٍ انتقل صلاح إلى ليفربول عام 2017؟",a:"روما"},
+  {d:"m",q:"من أي نادٍ انتقل هازارد إلى ريال مدريد عام 2019؟",a:"تشيلسي"},
+  {d:"h",q:"من أي نادٍ انتقل فان دايك إلى ليفربول؟",a:"ساوثهامبتون"},
+  {d:"h",q:"إلى أي نادٍ انتقل ساديو ماني من ليفربول عام 2022؟",a:"بايرن ميونخ"},
+  {d:"h",q:"من أي نادٍ انتقل غريزمان إلى برشلونة عام 2019؟",a:"أتلتيكو مدريد"},
+  {d:"h",q:"من أي نادٍ انتقل كوتينيو إلى برشلونة عام 2018؟",a:"ليفربول"},
+  {d:"h",q:"كم بلغت قيمة صفقة نيمار إلى باريس عام 2017؟",a:"222 مليون يورو"}
+ ]};
+const K="fbq2",clone=o=>JSON.parse(JSON.stringify(o));
+let D=null;try{D=JSON.parse(localStorage.getItem(K)||"null")}catch(e){}
+D=D||clone(DEF);
+const save=()=>{try{localStorage.setItem(K,JSON.stringify(D))}catch(e){}};
+const $=document.getElementById("app");
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const sh=a=>a.map(x=>[Math.random(),x]).sort((x,y)=>x[0]-y[0]).map(x=>x[1]);
+const LBL={p:"من هو اللاعب؟",tp:"لاعب من انتقالاته",g:"سؤال عام",t:"سؤال انتقالات"};
+let G=null,tab="g";
+
+function home(){
+ $.innerHTML=`<h1>⚽ تحدي كرة القدم</h1>
+ <button class="pri big" onclick="setup()">🎮 أوفلاين (على نفس الجهاز)</button>
+ <button class="big" onclick="online()">🌐 أونلاين</button>
+ <button class="w" onclick="editor()">إضافة أسئلة ولاعبين</button>
+ <button class="lnk w" onclick="if(confirm('استعادة البيانات الافتراضية؟')){const n=D.names;D=clone(DEF);D.names=n;save();home()}">استعادة الافتراضي</button>`;
+}
+function online(){
+ $.innerHTML=`<h1>🌐 أونلاين</h1><div class="card"><h2>قريباً</h2><p>اللعب أونلاين (غرف، حسابات، ترتيب عالمي) يحتاج سيرفراً، وهو المرحلة الثانية. الأوفلاين يعمل الآن بدون إنترنت.</p></div><button class="w" onclick="home()">رجوع</button>`;
+}
+function setup(){
+ const c=D.cfg,L=[["rounds","عدد الجولات"],["p","من هو اللاعب؟ (تلميحات) في كل جولة"],["tp","لاعب من انتقالاته في كل جولة"],["g","أسئلة عامة في كل جولة"],["t","أسئلة انتقالات في كل جولة"]];
+ $.innerHTML=`<h1>اللعب على نفس الجهاز</h1>
+ <div class="card"><h2>أسماء اللاعبين</h2>
+ <div class="chips">${D.names.map((n,i)=>`<span class="chip">${esc(n)} <a onclick="delName(${i})" style="cursor:pointer">✕</a></span>`).join("")||"<small>أضف اسماً واحداً على الأقل</small>"}</div>
+ <div class="row"><input id="nm" placeholder="اسم لاعب" onkeydown="if(event.key==='Enter')addName()"><button onclick="addName()">إضافة</button></div></div>
+ <div class="card"><h2>الإعدادات</h2>
+ ${L.map(([k,t])=>`<div class="row"><span>${t}</span><input type="number" min="0" max="20" value="${c[k]}" onchange="D.cfg.${k}=Math.max(0,+this.value);save()"></div>`).join("")}
+ <div class="row"><span>مستوى الصعوبة</span><select style="width:130px" onchange="D.cfg.diff=this.value;save()">${[["x","مختلط"],["m","متوسط"],["h","صعب"]].map(([v,t])=>`<option value="${v}" ${c.diff===v?"selected":""}>${t}</option>`).join("")}</select></div>
+ <small>الجواب الصحيح: نقطة للمتوسط ونقطتان للصعب.</small></div>
+ <button class="pri" onclick="start()">ابدأ اللعب</button><button class="w" onclick="home()">رجوع</button>`;
+}
+function addName(){const v=document.getElementById("nm").value.trim();if(v&&D.names.length<12){D.names.push(v);save()}setup()}
+function delName(i){D.names.splice(i,1);save();setup()}
+function start(){
+ if(!D.names.length){alert("أضف اسم لاعب واحد على الأقل");return}
+ const c=D.cfg,st={};
+ const refill=k=>{let a=D[k].filter(x=>c.diff==="x"||x.d===c.diff);if(!a.length)a=D[k];st[k]=sh(a)};
+ const rounds=[];
+ for(let r=0;r<c.rounds;r++){
+  const it=[];
+  for(const k of ["p","tp","g","t"])for(let i=0;i<c[k];i++){
+   if(!D[k].length)break;if(!st[k]||!st[k].length)refill(k);
+   it.push({t:k,d:st[k].pop(),cl:k==="p"?1:2,rev:false});
+  }
+  rounds.push(sh(it));
+ }
+ if(!rounds.flat().length){alert("لا توجد أسئلة. زد القيم.");return}
+ G={rounds,r:0,i:0,sc:D.names.map(()=>0)};paint();
+}
+const cur=()=>G.rounds[G.r][G.i];
+function paint(){
+ if(G.r>=G.rounds.length)return end();
+ const it=cur(),d=it.d,h=d.d==="h";
+ let body="";
+ if(it.t==="p")body=d.c.slice(0,it.cl).map((x,k)=>`<div class="clue">تلميح ${k+1}: ${esc(x)}</div>`).join("");
+ else if(it.t==="tp")body=`<div class="clue">${d.path.slice(0,it.cl).map(esc).join(" ← ")}${it.cl<d.path.length?" ← ؟":""}</div>`;
+ else body=`<h2 style="margin-top:12px">${esc(d.q)}</h2>`;
+ const more=(it.t==="p"&&it.cl<d.c.length)||(it.t==="tp"&&it.cl<d.path.length);
+ const ans=it.t==="p"||it.t==="tp"?d.n:d.a;
+ $.innerHTML=`<div class="bar"><span>الجولة ${G.r+1}/${G.rounds.length} · سؤال ${G.i+1}/${G.rounds[G.r].length}</span></div>
+ <div class="chips">${D.names.map((n,i)=>`<span class="chip">${esc(n)}: ${G.sc[i]}</span>`).join("")}</div>
+ <div class="card"><span class="tag">${LBL[it.t]}</span><span class="tag ${h?"h":""}">${h?"صعب":"متوسط"}</span>${body}
+ ${!it.rev?`${more?`<button class="w" onclick="more()">تلميح إضافي</button>`:""}<button class="pri" style="margin-top:12px" onclick="reveal()">معرفة الجواب</button>`
+ :`<div class="ans">${esc(ans)}</div><p style="margin:6px 0"><b>من أجاب بشكل صحيح؟</b> (${h?2:1} ${h?"نقطتان":"نقطة"})</p>
+ ${D.names.map((n,i)=>`<button class="w" onclick="award(${i})">${esc(n)}</button>`).join("")}<button class="w" style="color:var(--bad)" onclick="award(-1)">لا أحد (إجابة خاطئة)</button>`}</div>`;
+}
+function more(){cur().cl++;paint()}
+function reveal(){cur().rev=true;paint()}
+function award(i){
+ const it=cur();if(i>=0)G.sc[i]+=it.d.d==="h"?2:1;
+ G.i++;if(G.i>=G.rounds[G.r].length){G.r++;G.i=0}paint();
+}
+function end(){
+ const rk=D.names.map((n,i)=>[n,G.sc[i]]).sort((a,b)=>b[1]-a[1]),top=rk[0][1];
+ const win=rk.filter(x=>x[1]===top).map(x=>x[0]);
+ $.innerHTML=`<h1>انتهت اللعبة 🏆</h1><div class="card"><h2>${win.length>1?"تعادل: ":"الفائز: "}${win.map(esc).join(" و ")}</h2>
+ ${rk.map((x,i)=>`<div class="rk"><span>${i+1}. ${esc(x[0])}</span><b>${x[1]}</b></div>`).join("")}</div>
+ <button class="pri" onclick="start()">العب مجدداً</button><button class="w" onclick="setup()">الإعدادات</button><button class="w" onclick="home()">القائمة الرئيسية</button>`;
+}
+function editor(msg){
+ const f=(id,p)=>`<input class="in" id="${id}" placeholder="${p}">`;
+ const sel=`<select class="in" id="df"><option value="m">متوسط</option><option value="h">صعب</option></select>`;
+ let form="";
+ if(tab==="p")form=f("n","اسم اللاعب")+f("c1","التلميح 1 (الأصعب)")+f("c2","التلميح 2")+f("c3","التلميح 3 (الأسهل)");
+ else if(tab==="tp")form=f("n","اسم اللاعب")+f("pa","الأندية بالترتيب، افصل بينها بفاصلة ،");
+ else form=f("q","نص السؤال")+f("a","الجواب");
+ $.innerHTML=`<h1>إضافة محتوى</h1><div class="tabs">${[["g","عامة"],["t","انتقالات"],["p","لاعب"],["tp","من الانتقالات"]].map(([k,t])=>`<button class="${tab===k?"on":""}" onclick="tab='${k}';editor()">${t}</button>`).join("")}</div>
+ <div class="card">${form}${sel}<button class="pri" style="margin-top:8px" onclick="add()">حفظ</button><small>${msg||""}</small><br><small>المحفوظ في هذا القسم: ${D[tab].length}</small></div><button class="w" onclick="home()">رجوع</button>`;
+}
+function add(){
+ const v=id=>document.getElementById(id).value.trim(),d=v("df");
+ if(tab==="p"){if(!v("n")||!v("c1"))return editor("أدخل الاسم وتلميحاً واحداً على الأقل");D.p.push({d,n:v("n"),c:[v("c1"),v("c2"),v("c3")].filter(Boolean)})}
+ else if(tab==="tp"){const pa=v("pa").split(/[،,]/).map(x=>x.trim()).filter(Boolean);if(!v("n")||pa.length<2)return editor("أدخل الاسم ونادييْن على الأقل");D.tp.push({d,n:v("n"),path:pa})}
+ else{if(!v("q")||!v("a"))return editor("املأ السؤال والجواب");D[tab].push({d,q:v("q"),a:v("a")})}
+ save();editor("تمت الإضافة ✓");
+}
+home();
+</script>
+</body>
+</html>
