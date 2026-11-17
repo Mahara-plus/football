@@ -20,3 +20,7 @@
 - في Render استخدم Root Directory = `server`، وBuild Command = `npm install`، وStart Command = `node server.js`.
 - رابط Render الرئيسي يعرض اللعبة الآن، بينما يبقى اتصال اللعب أونلاين عبر `wss://اسم-الخدمة.onrender.com`.
 - فحص حالة السيرفر متاح عبر `/health`.
+
+## Updating the Android app icon
+
+The launcher icon is generated from `assets/icon-only.png`, `assets/icon-foreground.png`, and `assets/icon-background.png` by the GitHub Actions APK workflow. After building a new APK, uninstall the previous app from the phone before installing the new APK if Android continues showing a cached old launcher icon.
