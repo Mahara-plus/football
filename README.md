@@ -14,3 +14,9 @@
 3. سيعطيك رابطاً مثل `https://اسمك.onrender.com`. اكتبه في اللعبة بصيغة `wss://اسمك.onrender.com`.
 4. المضيف يضغط "إنشاء غرفة" ويعطي الرمز للآخرين، وهم يدخلونه من "انضمام".
 للتشغيل على جهازك: `cd server && npm install && node server.js` ثم `ws://عنوان-جهازك:8080` (يعمل في المتصفح فقط، أما APK فيحتاج wss).
+
+\n## الشعار وتشغيل واجهة Render
+- تم إضافة الشعار إلى `www/logo.png` ليظهر كأيقونة المتصفح، وإلى `assets/` لتوليد أيقونة تطبيق Android وشاشة البداية أثناء بناء APK.
+- في Render استخدم Root Directory = `server`، وBuild Command = `npm install`، وStart Command = `node server.js`.
+- رابط Render الرئيسي يعرض اللعبة الآن، بينما يبقى اتصال اللعب أونلاين عبر `wss://اسم-الخدمة.onrender.com`.
+- فحص حالة السيرفر متاح عبر `/health`.
